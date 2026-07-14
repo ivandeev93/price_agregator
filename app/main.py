@@ -1,11 +1,39 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from app.api.v1.endpoints import product
+
+from app.core.database import close_db
+from app.utils.cache import close_cache
+
+from app.routers import product
+
+from app.core.config import settings
 
 
-app = FastAPI(title="Price Tracker")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
+    print("Starting application")
+
+    yield
+
+    print("Stopping application")
+
+    await close_cache()
+    await close_db()
 
 
-app.include_router(product.router, prefix="/api/products", tags=["products"])
+app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
+
+
+app.include_router(
+    product.router,
+    prefix="/api/products",
+    tags=[
+        "products"
+    ],
+)
 
 
 @app.get("/")

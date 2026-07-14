@@ -1,12 +1,27 @@
 from celery import Celery
+
 from app.core.config import settings
 
+
 celery = Celery(
-    "worker",
-    broker=settings.REDIS_URL,
-    backend=settings.REDIS_URL
+    "price_tracker",
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND,
 )
 
-celery.conf.task_routes = {
-    "app.tasks.*": {"queue": "default"},
-}
+
+celery.conf.update(
+    task_serializer="json",
+    accept_content=[
+        "json"
+    ],
+    result_serializer="json",
+
+    timezone="UTC",
+
+    task_routes={
+        "app.tasks.*": {
+            "queue": "prices"
+        }
+    },
+)
