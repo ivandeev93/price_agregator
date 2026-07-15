@@ -5,7 +5,8 @@ from collections.abc import AsyncIterator
 
 from app.core.config import settings
 
-engine = create_async_engine(settings.DATABASE_URL, echo=True)
+
+engine = create_async_engine(settings.DATABASE_URL, echo=False)
 
 
 AsyncSessionLocal = async_sessionmaker(
@@ -20,9 +21,16 @@ class Base(DeclarativeBase):
 
 
 async def get_db() -> AsyncIterator[AsyncSession]:
+    """
+    Dependency для получения сессии БД.
+    """
+
     async with AsyncSessionLocal() as session:
         yield session
 
 
-async def close_db():
+async def close_db() -> None:
+    """
+    Корректно закрывает соединения с БД.
+    """
     await engine.dispose()

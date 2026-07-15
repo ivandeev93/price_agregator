@@ -10,7 +10,11 @@ async def create(
     db: AsyncSession,
     product_id: int,
     price: Decimal,
-):
+) -> PriceHistory:
+    """
+    Создает запись изменения цены.
+    """
+
     history = PriceHistory(
         product_id=product_id,
         price=price,
@@ -19,7 +23,6 @@ async def create(
     db.add(history)
 
     await db.commit()
-
     await db.refresh(history)
 
     return history
@@ -28,7 +31,11 @@ async def create(
 async def get_history(
     db: AsyncSession,
     product_id: int,
-):
+) -> list[PriceHistory]:
+    """
+    Возвращает всю историю цен товара.
+    """
+
     result = await db.execute(
         select(PriceHistory)
         .where(
@@ -39,4 +46,28 @@ async def get_history(
         )
     )
 
-    return list(result.scalars())
+    return list(
+        result.scalars().all()
+    )
+
+
+async def get_latest(
+    db: AsyncSession,
+    product_id: int,
+) -> PriceHistory | None:
+    """
+    Возвращает последнее изменение цены.
+    """
+
+    result = await db.execute(
+        select(PriceHistory)
+        .where(
+            PriceHistory.product_id == product_id
+        )
+        .order_by(
+            PriceHistory.checked_at.desc()
+        )
+        .limit(1)
+    )
+
+    return result.scalar_one_or_none()

@@ -2,6 +2,7 @@ services:
 
   postgres:
     image: postgres:16
+
     container_name: price_postgres
 
     environment:
@@ -19,6 +20,7 @@ services:
 
   redis:
     image: redis:7
+
     container_name: price_redis
 
     ports:
@@ -33,9 +35,12 @@ services:
     container_name: price_api
 
     command:
-      uvicorn app.main:app
-      --host 0.0.0.0
-      --port 8000
+      uvicorn
+      app.main:app
+      --host
+      0.0.0.0
+      --port
+      8000
       --reload
 
     volumes:
@@ -61,7 +66,8 @@ services:
 
     command:
       celery
-      -A app.worker.celery_app.celery
+      -A
+      app.worker.celery_app.celery
       worker
       --loglevel=info
 
@@ -73,6 +79,30 @@ services:
 
     depends_on:
       - postgres
+      - redis
+
+
+
+  beat:
+    build:
+      context: .
+
+    container_name: price_beat
+
+    command:
+      celery
+      -A
+      app.worker.celery_app.celery
+      beat
+      --loglevel=info
+
+    volumes:
+      - .:/app
+
+    env_file:
+      - .env
+
+    depends_on:
       - redis
 
 

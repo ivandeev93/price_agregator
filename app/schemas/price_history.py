@@ -5,6 +5,10 @@ from pydantic import BaseModel, ConfigDict
 
 
 class PriceHistoryResponse(BaseModel):
+    """
+    Ответ с историей изменения цены.
+    """
+
     id: int
     product_id: int
     price: Decimal

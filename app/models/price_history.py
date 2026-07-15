@@ -32,7 +32,17 @@ class PriceHistory(Base):
         nullable=False,
     )
 
-    product = relationship(
+    product: Mapped["Product"] = relationship(
         "Product",
         back_populates="history",
     )
+
+    def __repr__(self) -> str:
+        return (
+            f"<PriceHistory("
+            f"id={self.id}, "
+            f"product_id={self.product_id}, "
+            f"price={self.price}, "
+            f"checked_at={self.checked_at}"
+            f")>"
+        )

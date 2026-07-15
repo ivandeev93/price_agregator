@@ -9,6 +9,10 @@ async def create_product(
     db: AsyncSession,
     data: ProductCreate,
 ):
+    """
+    Создание товара.
+    """
+
     return await product_repository.create(
         db,
         data,
@@ -19,6 +23,10 @@ async def get_product(
     db: AsyncSession,
     product_id: int,
 ):
+    """
+    Получение товара по ID.
+    """
+
     return await product_repository.get_by_id(
         db,
         product_id,
@@ -30,6 +38,10 @@ async def get_products(
     limit: int = 50,
     offset: int = 0,
 ):
+    """
+    Получение списка товаров.
+    """
+
     return await product_repository.get_all(
         db,
         limit,
@@ -42,6 +54,10 @@ async def update_product(
     product_id: int,
     data: ProductUpdate,
 ):
+    """
+    Обновление товара.
+    """
+
     return await product_repository.update_product(
         db,
         product_id,
@@ -54,6 +70,10 @@ async def update_price(
     product_id: int,
     price: Decimal,
 ):
+    """
+    Обновление текущей цены.
+    """
+
     return await product_repository.update_price(
         db,
         product_id,
@@ -65,6 +85,10 @@ async def delete_product(
     db: AsyncSession,
     product_id: int,
 ):
+    """
+    Удаление товара.
+    """
+
     return await product_repository.delete_product(
         db,
         product_id,
